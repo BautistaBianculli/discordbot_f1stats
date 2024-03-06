@@ -36,7 +36,9 @@ func main() {
 		fmt.Println("Error al abrir la conexión de Discord,", err)
 		return
 	}
-	defer dg.Close()
+	defer func(dg *discordgo.Session) {
+		_ = dg.Close()
+	}(dg)
 
 	fmt.Println("Bot está ahora en funcionamiento. Presiona Ctrl+C para cerrar.")
 
@@ -56,7 +58,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		command := strings.ToLower(strings.TrimSpace(m.Content[len(prefix):])) // Elimina el prefijo y convierte a minúsculas
 		switch command {
 		case "who":
-			s.ChannelMessageSend(m.ChannelID, "¡Hi "+m.Author.Mention()+"! I'm Kevin Schumacher, i'm still in development by my creator, be patient so I can bring you the best Formula 1 statistics. "+endOfMessage)
+			_, _ = s.ChannelMessageSend(m.ChannelID, "¡Hi "+m.Author.Mention()+"! I'm Kevin Schumacher, i'm still in development by my creator, be patient so I can bring you the best Formula 1 statistics. "+endOfMessage)
 		}
 	}
 }
