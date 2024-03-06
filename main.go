@@ -56,7 +56,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		switch command {
 		case "who":
 			// Responde al comando !who
-			s.ChannelMessageSend(m.ChannelID, "¡Hola "+m.Author.Username+"!")
+			s.ChannelMessageSend(m.ChannelID, "¡Hi "+m.Author.Username+"! I'm Kevin Schumacher, i'm still in development by my creator, be patient so I can bring you the best Formula 1 statistics.")
 		}
 	}
 }
