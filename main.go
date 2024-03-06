@@ -26,13 +26,14 @@ func main() {
 	// Registra un evento para ser llamado cada vez que se recibe un mensaje
 	dg.AddHandler(messageCreate)
 
-	dg.Identify.Intents = discordgo.IntentsGuildMessages
+	dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 	// Abre la conexión al servidor de Discord
 	err = dg.Open()
 	if err != nil {
 		fmt.Println("Error al abrir la conexión de Discord,", err)
 		return
 	}
+	defer dg.Close()
 
 	fmt.Println("Bot está ahora en funcionamiento. Presiona Ctrl+C para cerrar.")
 
@@ -42,7 +43,6 @@ func main() {
 	<-sc
 
 	// Cierra la conexión de DiscordGo
-	dg.Close()
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
