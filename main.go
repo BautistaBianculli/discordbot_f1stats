@@ -4,6 +4,7 @@ import (
 	"BotDiscordGO/internal/server/infra/config"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"log"
 	"os"
 	"os/signal"
 	"strings"
@@ -54,6 +55,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
+
+	log.Printf("The user %s have the id %s", m.Author.Mention(), m.Author.ID)
 	if strings.HasPrefix(m.Content, prefix) {
 		command := strings.ToLower(strings.TrimSpace(m.Content[len(prefix):])) // Elimina el prefijo y convierte a minúsculas
 		switch command {
