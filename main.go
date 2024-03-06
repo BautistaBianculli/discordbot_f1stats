@@ -1,19 +1,13 @@
 package main
 
 import (
+	"BotDiscordGO/internal/application/infra/repo"
 	"BotDiscordGO/internal/server/infra/config"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
-	"log"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
-)
-
-const (
-	prefix       = "/"
-	endOfMessage = "FIUUUUUUUUUUUUUUUUUUUUUUM"
 )
 
 func main() {
@@ -28,7 +22,7 @@ func main() {
 	}
 
 	// Registra un evento para ser llamado cada vez que se recibe un mensaje
-	dg.AddHandler(messageCreate)
+	dg.AddHandler(repo.MessageCreate)
 
 	dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 	// Abre la conexión al servidor de Discord
@@ -48,20 +42,4 @@ func main() {
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
 
-}
-
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	// Ignora los mensajes del propio bot
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
-	log.Printf("The user %s have the id %s", m.Author.Mention(), m.Author.ID)
-	if strings.HasPrefix(m.Content, prefix) {
-		command := strings.ToLower(strings.TrimSpace(m.Content[len(prefix):])) // Elimina el prefijo y convierte a minúsculas
-		switch command {
-		case "who":
-			_, _ = s.ChannelMessageSend(m.ChannelID, "¡Hi "+m.Author.Mention()+"! I'm Kevin Schumacher, i'm still in development by my creator, be patient so I can bring you the best Formula 1 statistics. "+endOfMessage)
-		}
-	}
 }
