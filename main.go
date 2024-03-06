@@ -56,7 +56,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		command := strings.ToLower(strings.TrimSpace(m.Content[len(prefix):])) // Elimina el prefijo y convierte a minúsculas
 		switch command {
 		case "who":
-			s.ChannelMessageSend(m.ChannelID, "¡Hi "+m.Author.Username+"! I'm Kevin Schumacher, i'm still in development by my creator, be patient so I can bring you the best Formula 1 statistics. "+endOfMessage)
+			s.ChannelMessageSend(m.ChannelID, "¡Hi "+m.Author.Mention()+"! I'm Kevin Schumacher, i'm still in development by my creator, be patient so I can bring you the best Formula 1 statistics. "+endOfMessage)
 		}
 	}
 }
