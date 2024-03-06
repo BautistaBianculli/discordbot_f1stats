@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	prefix       = "!"
+	prefix       = "/"
 	endOfMessage = "FIUUUUUUUUUUUUUUUUUUUUUUM"
 )
 
