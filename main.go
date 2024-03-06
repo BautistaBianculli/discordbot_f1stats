@@ -10,7 +10,10 @@ import (
 	"syscall"
 )
 
-const prefix = "!"
+const (
+	prefix       = "!"
+	endOfMessage = "FIUUUUUUUUUUUUUUUUUUUUUUM"
+)
 
 func main() {
 	c := config.LoadConfig()
@@ -42,7 +45,6 @@ func main() {
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
 
-	// Cierra la conexión de DiscordGo
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -51,12 +53,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 	if strings.HasPrefix(m.Content, prefix) {
-		// Procesa el comando
 		command := strings.ToLower(strings.TrimSpace(m.Content[len(prefix):])) // Elimina el prefijo y convierte a minúsculas
 		switch command {
 		case "who":
-			// Responde al comando !who
-			s.ChannelMessageSend(m.ChannelID, "¡Hi "+m.Author.Username+"! I'm Kevin Schumacher, i'm still in development by my creator, be patient so I can bring you the best Formula 1 statistics.")
+			s.ChannelMessageSend(m.ChannelID, "¡Hi "+m.Author.Username+"! I'm Kevin Schumacher, i'm still in development by my creator, be patient so I can bring you the best Formula 1 statistics. "+endOfMessage)
 		}
 	}
 }
