@@ -15,10 +15,9 @@ const prefix = "!"
 func main() {
 	c := config.LoadConfig()
 	// Token de tu bot, obtén esto al crear tu bot en el portal de desarrolladores de Discord
-	token := c.Token
 
 	// Crea una nueva sesión de DiscordGo
-	dg, err := discordgo.New("Bot " + token)
+	dg, err := discordgo.New("Bot " + c.Token)
 	if err != nil {
 		fmt.Println("Error al crear la sesión de DiscordGo,", err)
 		return
