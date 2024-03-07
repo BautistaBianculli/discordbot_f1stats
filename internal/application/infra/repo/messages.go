@@ -2,11 +2,13 @@ package repo
 
 import (
 	"BotDiscordGO/internal/application/infra/domain"
+	f1Domain "BotDiscordGO/internal/f1api/infra/domain"
 	"BotDiscordGO/internal/server/infra/config"
 	"BotDiscordGO/internal/server/infra/config/utils"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"log"
+	"time"
 )
 
 const (
@@ -16,15 +18,19 @@ const (
 )
 
 type Messages struct {
-	Config *config.Config
+	Config      *config.Config
+	FRepository f1Domain.F1RepositoryInterface
 }
 
 type MessagePriv interface {
 	helpMessage(s *discordgo.Session, i *discordgo.InteractionCreate)
+	whoMessage(s *discordgo.Session, i *discordgo.InteractionCreate)
+	avatarMessage(s *discordgo.Session, i *discordgo.InteractionCreate)
+	getTableOfYear(s *discordgo.Session, i *discordgo.InteractionCreate)
 }
 
 func (m *Messages) MessageCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
-
+	s.Client.Timeout = 20 * time.Second
 	if i.Interaction.ID == s.State.User.ID {
 		return
 	}
@@ -32,11 +38,13 @@ func (m *Messages) MessageCreate(s *discordgo.Session, i *discordgo.InteractionC
 	log.Printf("The user %s have the id %s", i.Interaction.Member.Nick, i.Interaction.Member.User.ID)
 	switch data.Name {
 	case "who":
-		whoMessage(s, i)
+		m.whoMessage(s, i)
 	case "avatar":
-		avatarMessage(s, i)
+		m.avatarMessage(s, i)
 	case "help":
 		m.helpMessage(s, i)
+	case "drivertable":
+		m.getTableOfYear(s, i)
 	}
 }
 
@@ -69,7 +77,7 @@ func (m *Messages) helpMessage(s *discordgo.Session, i *discordgo.InteractionCre
 	}
 }
 
-func whoMessage(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (m *Messages) whoMessage(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	response := &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -83,7 +91,7 @@ func whoMessage(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 }
 
-func avatarMessage(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (m *Messages) avatarMessage(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	author := discordgo.MessageEmbedAuthor{
 		Name:    fmt.Sprintf(readerMessage, i.Interaction.Member.Nick),
 		IconURL: discordgo.EndpointUserAvatar(s.State.User.ID, s.State.User.Avatar),
@@ -100,6 +108,23 @@ func avatarMessage(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Embeds: []*discordgo.MessageEmbed{&embed},
+		},
+	}
+	err := s.InteractionRespond(i.Interaction, response)
+
+	if err != nil {
+		log.Printf("Error: %v", err)
+	}
+}
+
+func (m *Messages) getTableOfYear(s *discordgo.Session, i *discordgo.InteractionCreate) {
+
+	msg := m.FRepository.GetDriverTable(i.Interaction.ApplicationCommandData().Options[0].StringValue())
+
+	response := &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: msg,
 		},
 	}
 	err := s.InteractionRespond(i.Interaction, response)

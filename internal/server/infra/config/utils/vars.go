@@ -16,5 +16,17 @@ var (
 			Name:        "help",
 			Description: "Send my commands information",
 		},
+		{
+			Name:        "drivertable",
+			Description: "Returns the table of the year you sent",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "year",
+					Description: "The year for which you want the table",
+					Required:    true,
+				},
+			},
+		},
 	}
 )

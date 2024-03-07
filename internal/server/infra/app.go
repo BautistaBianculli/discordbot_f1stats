@@ -19,7 +19,6 @@ func InitApp(c config.Config) {
 		return
 	}
 
-	// Registra un evento para ser llamado cada vez que se recibe un mensaje
 	dg.AddHandler(GetHandlers(c).Handler.MessageCreate)
 	dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 	// Abre la conexión al servidor de Discord
