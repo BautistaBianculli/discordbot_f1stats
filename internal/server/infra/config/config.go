@@ -5,7 +5,9 @@ import (
 )
 
 type Config struct {
-	Token string `json:"token"`
+	Token       string `json:"token" required:"true"`
+	AppId       string `json:"app_id" split_words:"true" required:"true"`
+	GuildMainId string `json:"guild_main_id" split_words:"true" required:"true"`
 }
 
 func LoadConfig() Config {
