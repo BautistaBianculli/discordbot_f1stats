@@ -132,7 +132,6 @@ func (m *Messages) getTableOfYear(s *discordgo.Session, i *discordgo.Interaction
 	year := i.Interaction.ApplicationCommandData().Options[0].StringValue()
 
 	msg := m.FRepository.GetDriverTable(year)
-
 	_, err = s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{Content: msg})
 
 	if err != nil {
