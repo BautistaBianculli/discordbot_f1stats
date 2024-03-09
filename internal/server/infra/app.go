@@ -11,6 +11,7 @@ import (
 	"syscall"
 )
 
+// InitApp start application and settings
 func InitApp(c config.Config) {
 
 	dg, err := discordgo.New("Bot " + c.Token)
@@ -21,7 +22,7 @@ func InitApp(c config.Config) {
 
 	dg.AddHandler(GetHandlers(c).Handler.MessageCreate)
 	dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
-	// Abre la conexión al servidor de Discord
+
 	err = dg.Open()
 	if err != nil {
 		fmt.Println("Error al abrir la conexión de Discord,", err)
@@ -35,13 +36,13 @@ func InitApp(c config.Config) {
 
 	fmt.Println("Bot está ahora en funcionamiento. Presiona Ctrl+C para cerrar.")
 
-	// Espera hasta que se reciba una señal para cerrar el bot
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
 
 }
 
+// registerCommands register the commands to the discord bot to be suggested in the different guilds
 func registerCommands(s *discordgo.Session, c config.Config) {
 
 	guilds := s.State.Guilds
