@@ -12,9 +12,10 @@ import (
 )
 
 const (
-	endOfMessage    = "FIUUUUUUUUUUUUUUUUUUUUUUM"
-	readerMessage   = "This is my image %s. "
-	whoMessageConst = "¡Hi %s! I'm Kevin Schumacher, i'm still in development by my creator, be patient so I can bring you the best Formula 1 statistics. "
+	endOfMessage     = "FIUUUUUUUUUUUUUUUUUUUUUUM"
+	readerMessage    = "This is my image %s. "
+	whoMessageConst  = "¡Hi %s! I'm Kevin Schumacher, i'm still in development by my creator, be patient so I can bring you the best Formula 1 statistics. "
+	driverTableError = "There was an error in responding with the %s year's standings. "
 )
 
 type Messages struct {
@@ -119,17 +120,24 @@ func (m *Messages) avatarMessage(s *discordgo.Session, i *discordgo.InteractionC
 
 func (m *Messages) getTableOfYear(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
-	msg := m.FRepository.GetDriverTable(i.Interaction.ApplicationCommandData().Options[0].StringValue())
-
 	response := &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: msg,
-		},
+		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
 	}
 	err := s.InteractionRespond(i.Interaction, response)
 
 	if err != nil {
 		log.Printf("Error: %v", err)
 	}
+
+	year := i.Interaction.ApplicationCommandData().Options[0].StringValue()
+
+	msg := m.FRepository.GetDriverTable(year)
+
+	_, err = s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{Content: msg})
+
+	if err != nil {
+		s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{Content: fmt.Sprintf(driverTableError, year) + endOfMessage})
+		log.Printf("Error: %v", err)
+	}
+
 }
